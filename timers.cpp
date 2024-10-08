@@ -178,3 +178,62 @@
         OCR1A = 15625;
     }
  */
+
+/*
+    ! Timer Input Capture
+
+    ? Most often used for measuring frequency of signals
+    ? The frequency is measured by counting the number of clock pulses appearing
+
+    ? Capture Resgister stores the period of rising edge or falling edge of timer to calculate the frequency
+    ? difference between two rising edges or 2 falling edges gives the time period of each pulse, inverse of which gives the frequency
+
+    ! Input Timer Capture in Arduino
+
+    ? Only one input capture channel in ATMEGA328p (ICP1)
+    ? Only available in Timer 1 (16 bit timer)
+
+    ! Steps
+
+    ? Enable the global interrupts
+
+    * SREG = (1 << 7);
+
+    ? Enable the required timer interrupt
+
+    * ICIE1 -> Timer/Counter 1, Input Capture Interrupt Enable
+
+    * TIMSK1 |= (1 << ICIE1);
+
+    ? Set mode of the timer
+
+    * TCCR1A &= (~(1 << WGM10)) & (~(1 << WGM11));
+    * TCCR1B &= (~(1 << WGM12)) & (~(1 << WGM13));
+
+    ? set the prescaler
+
+    * TCCR1B |= (1 << CS10) | (1 << CS12);
+    * TCCR1B &= (~(1 << CS11));
+
+    ? start the timer with initial value
+
+    * TCNT1 = 0;
+
+    ? select edge for capturing
+
+    * ICES1 -> Input Capture Edge Select
+
+    * ICES1 = 0 -> Falling edge
+    * ICES1 = 1 -> Rising edge
+
+    * TCCR1B |= (1 << ICES1);
+
+    ? Implement the ISR function
+    * ICR1 -> Stores the value of TCNT1 during the interrupt
+
+    unsigned int captured;
+    * ISR(TIMER1_CAPT_vect) {
+        captured = ICR1;
+    }
+
+*/
